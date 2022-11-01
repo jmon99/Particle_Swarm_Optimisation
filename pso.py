@@ -17,6 +17,20 @@ class Swarm:
     max_iterations=200,
     cost_bound=None):
 
+    """
+    Initailise Swarm object.
+
+    Parameters:
+    function -> the fitness function to be optimised
+    population -> the size of the swarm
+    bounds -> numpy array of pairs of the lower and upper bound of each parameter
+    	      given in the format [[x1_lower, x1_upper][x2_lower, x2_upper],...]
+    vmax -> maximum velocity value
+    beta, c1, c2 -> paramaters of the PSO algorithm
+    max_iterations -> Stop condition, algorithm will stop after given number of iterations
+    cost_bound -> Stop condition, algorithm will stop when fitness function passes cost_bound 
+    """
+
     #check bounds is a numpy array of pairs
     if type(bounds) != 'numpy.ndarray':
       bounds = np.array(bounds)
@@ -37,6 +51,9 @@ class Swarm:
 
     
   def initialise_swarm(self):
+    """
+    Initialises particles with random velocities and positions
+    """
     self.velocity = np.random.uniform(0 - self.vmax, self.vmax, self.population)
     lower_bounds = self.bounds[:,0]
     upper_bounds = self.bounds[:,1]
