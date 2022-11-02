@@ -34,8 +34,10 @@ class Swarm:
     #check bounds is a numpy array of pairs
     if type(bounds) != 'numpy.ndarray':
       bounds = np.array(bounds)
+    if len(bounds.shape) != 2:
+      raise Exception("bounds should be a numpy  array of pairs of bounds in the format np.array([[x1_lower, x1_upper], [x2_lower, x2_upper], ...])")
     if bounds.shape[1] != 2:
-      print("bounds should be a numpy  array of pairs of bounds in the format np.array([[x1_lower, x1_upper], [x2_lower, x2_upper], ...])")
+      raise Exception("bounds should be a numpy  array of pairs of bounds in the format np.array([[x1_lower, x1_upper], [x2_lower, x2_upper], ...])")
 
     self.function = function
     self.population = population
@@ -49,7 +51,6 @@ class Swarm:
     self.velocity = None
     self.position = None
 
-    
   def initialise_swarm(self):
     """
     Initialises particles with random velocities and positions
