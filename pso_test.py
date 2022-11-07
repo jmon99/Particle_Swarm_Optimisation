@@ -98,3 +98,22 @@ def test_update_velocity():
   
   return True
 
+def test_update_position():
+  bounds = [[0,1], [-1,1], [-2,2]]
+  population = 3
+  swarm = Swarm(function=simple_fun, population=population, bounds=bounds, vmax=1)
+  swarm.position = np.array([[0, 1, 2], [1, 1, 1], [2, 2, 1]])
+  swarm.velocity = np.array([[0.1, 0.5, 0],[0.1, -0.4, 0.2],[-1, -0.5, 0.1]])
+  print(swarm.position, swarm.velocity)
+  swarm.position = swarm.update_position()
+  expected = [[0.1, 1.5, 2], [1.1, 0.6, 1.2], [1, 1.5, 1.1]]
+  
+  for i in range(swarm.position.shape[0]):
+    for j in range(swarm.position.shape[1]):
+
+      if swarm.position[i][j] != expected[i][j]:
+        return "Position update incorrect, recieved {} , expected {}".format(swarm.position,expected)
+
+  return True
+
+

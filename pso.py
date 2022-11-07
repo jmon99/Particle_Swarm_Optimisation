@@ -72,5 +72,6 @@ class Swarm:
     term3 = term3[:,np.newaxis]
     return term1 + term2 + term3
     
-
+  def update_position(self):
+    return self.position + self.velocity
 
