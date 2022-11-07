@@ -52,6 +52,8 @@ class Swarm:
     self.position = None
     self.p_best = None
     self.g_best = None
+    self.best_fitness = None
+    self.g_fitness = None
 
   def initialise_swarm(self):
     """
@@ -62,16 +64,41 @@ class Swarm:
     self.velocity = np.random.uniform(0 - self.vmax, self.vmax, [self.population, len(lower_bounds)])
     self.position = np.random.uniform(lower_bounds, upper_bounds, [self.population, len(lower_bounds)])
     self.p_best = self.position
+    self.best_fitness = np.array(list(map(self.function, self.position)))
+    g_index = np.argmax(self.best_fitness)
+    self.g_fitness = self.best_fitness[g_index]
+    self.g_best = self.position[g_index]
+
 
   def update_velocity(self):
     np.random.seed(100)
     r1, r2 = np.random.uniform(0,1,[2,self.population])
     term1 = self.beta * self.velocity
     term2 = self.c1 * np.multiply(r1[:,np.newaxis],self.p_best)
-    term3 = self.c2 * r2 * self.g_best
-    term3 = term3[:,np.newaxis]
-    return term1 + term2 + term3
+    term3 = self.c2 * r2[:,np.newaxis] * self.g_best
+    return np.add(np.add(term1, term2), term3)
     
   def update_position(self):
-    return self.position + self.velocity
+    return np.add(self.position, self.velocity)
+
+  def step(self, steps = 1, tol = 0):
+
+    for i in range(steps):
+      self.velocity = self.update_velocity()
+      print("vel", self.velocity)
+      self.position = self.update_position()
+      print("pos", self.position)
+      cur_fitness = np.array(list(map(self.function, self.position)))
+
+      for i in range(len(cur_fitness)):
+
+        if cur_fitness[i] > self.best_fitness[i]:
+          self.best_fitness[i] = cur_fitness[i]
+          self.p_best[i] = self.position[i]
+    
+      if cur_fitness.max() > self.g_fitness:
+        self.g_fitness = cur_fitness.max()
+
+      print(self.best_fitness)
+
 
