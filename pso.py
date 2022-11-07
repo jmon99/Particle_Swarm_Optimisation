@@ -50,14 +50,27 @@ class Swarm:
     self.vmax = vmax
     self.velocity = None
     self.position = None
+    self.p_best = None
+    self.g_best = None
 
   def initialise_swarm(self):
     """
     Initialises particles with random velocities and positions
     """
-    self.velocity = np.random.uniform(0 - self.vmax, self.vmax, self.population)
     lower_bounds = self.bounds[:,0]
     upper_bounds = self.bounds[:,1]
-    self.position = np.random.uniform(lower_bounds, upper_bounds)
+    self.velocity = np.random.uniform(0 - self.vmax, self.vmax, [self.population, len(lower_bounds)])
+    self.position = np.random.uniform(lower_bounds, upper_bounds, [self.population, len(lower_bounds)])
+    self.p_best = self.position
 
-  
+  def update_velocity(self):
+    np.random.seed(100)
+    r1, r2 = np.random.uniform(0,1,[2,self.population])
+    term1 = self.beta * self.velocity
+    term2 = self.c1 * np.multiply(r1[:,np.newaxis],self.p_best)
+    term3 = self.c2 * r2 * self.g_best
+    term3 = term3[:,np.newaxis]
+    return term1 + term2 + term3
+    
+
+

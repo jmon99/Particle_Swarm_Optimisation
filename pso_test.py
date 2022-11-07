@@ -18,11 +18,14 @@ def test_initial_velocity():
   swarm = Swarm(function=simple_fun, population = population, bounds=bounds, vmax=1)
   swarm.initialise_swarm()
 
-  if(swarm.velocity[0] > 1 or swarm.velocity[1] > 1):
+  if swarm.velocity.shape != (population, 2):
+    return "Test failed, velocity should be a [pop, param] in this case [50,2] array, instead was {}".format(swarm.velocity.shape)
+
+  if(swarm.velocity[0][0] > 1 or swarm.velocity[1][1] > 1):
     line()
     return "Test failed, initial velocity is too high :("
 
-  if(swarm.velocity[0] < -1 or swarm.velocity[1] < -1):
+  if(swarm.velocity[0][1] < -1 or swarm.velocity[1][0] < -1):
     line()
     return "Initial Velocity Test failed, initial velocity is too Low :("
     return False
@@ -34,10 +37,12 @@ def test_initial_position():
   population = 50
   swarm = Swarm(function=simple_fun, population=population, bounds=bounds, vmax=1)
   swarm.initialise_swarm()
+
+  if(swarm.position.shape != swarm.velocity.shape):
+    return "swarm.postion initialised with wrong shape"
   
-  if(swarm.position[0] < 0 or swarm.position[1] < 1 or swarm.position[0] > 1 or swarm.position[1] > 10):
-    line()
-    return "Inital Position Test Failed, postion is outside of given bounds"
+  if(swarm.position[0][0] < 0 or swarm.position[1][1] < 1 or swarm.position[1][0] > 1 or swarm.position[0][1] > 10):
+    return "Inital Position Test Failed, postion {} is outside of given bounds".format(swarm.position)
 
   return True
 
@@ -67,7 +72,7 @@ def test_check_data_type_for_bounds1():
 def test_check_data_type_for_bounds2():
   bounds = 10
   population = 50
-
+  
   try:
     swarm = Swarm(function=simple_fun, population=population, bounds=bounds, vmax=1)
     swarm.initialise_swarm()
@@ -75,6 +80,21 @@ def test_check_data_type_for_bounds2():
   except:
     return True
      
-   
+def test_update_velocity():
+  bounds = [[0,1]]
+  population = 3
+  swarm = Swarm(function=simple_fun, population=population, bounds=bounds, vmax=1)
+  swarm.position = [[0],[0],[0]]
+  swarm.velocity = [[1],[1],[1]]
+  swarm.p_best = [[1],[0],[2]]
+  swarm.g_best = 1
+  swarm.velocity = swarm.update_velocity()
+  expected_vol = [[3.62],[1.01],[3.54]]
+  round_res = np.round_(swarm.velocity, decimals = 2)
+
+  for i in range(len(expected_vol)):
+    if round_res[i][0] != expected_vol[i][0]:
+      return "Updated velocities incorrect. Recieved {}, expected {}".format(round_res, expected_vol)
   
-  
+  return True
+
