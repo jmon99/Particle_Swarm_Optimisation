@@ -77,11 +77,12 @@ class Swarm:
     term2 = self.c1 * np.multiply(r1[:,np.newaxis],self.p_best)
     term3 = self.c2 * r2[:,np.newaxis] * self.g_best
     vel = np.add(np.add(term1, term2), term3)
-    norm = np.linalg.norm(vel)
+    norms = np.linalg.norm(vel, axis = 1)
 
-    if norm > self.vmax:
-      vel = vel/norm
-      vel = vel * self.vmax
+    for i, norm in enumerate(norms):
+      if norm > self.vmax:
+        vel[i] = vel[i]/norm
+        vel[i] = vel[i] * self.vmax
      
     return vel
 

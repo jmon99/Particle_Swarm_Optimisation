@@ -86,7 +86,7 @@ def test_check_data_type_for_bounds2():
 def test_update_velocity():
   bounds = [[0,1]]
   population = 3
-  swarm = Swarm(function=simple_fun_list, population=population, bounds=bounds, vmax=1)
+  swarm = Swarm(function=simple_fun_list, population=population, bounds=bounds, vmax=10)
   swarm.position = [[0],[0],[0]]
   swarm.velocity = [[1],[1],[1]]
   swarm.p_best = [[1],[0],[2]]
@@ -123,10 +123,8 @@ def test_step():
   population = 10
   swarm = Swarm(function=simple_fun_list, population=population, bounds=bounds, vmax = 0.1)
   swarm.initialise_swarm()
-  print(swarm.position)
-  print(swarm.best_fitness)
-  swarm.step(steps = 10, tol = 0.01)
-  return str(swarm.g_best)
+  swarm.step(steps = 100, tol = 0.01)
+  return str(swarm.g_best) + str(swarm.g_fitness)
   
 
 
