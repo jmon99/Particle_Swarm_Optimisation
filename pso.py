@@ -76,8 +76,15 @@ class Swarm:
     term1 = self.beta * self.velocity
     term2 = self.c1 * np.multiply(r1[:,np.newaxis],self.p_best)
     term3 = self.c2 * r2[:,np.newaxis] * self.g_best
-    return np.add(np.add(term1, term2), term3)
-    
+    vel = np.add(np.add(term1, term2), term3)
+    norm = np.linalg.norm(vel)
+
+    if norm > self.vmax:
+      vel = vel/norm
+      vel = vel * self.vmax
+     
+    return vel
+
   def update_position(self):
     return np.add(self.position, self.velocity)
 
@@ -85,9 +92,7 @@ class Swarm:
 
     for i in range(steps):
       self.velocity = self.update_velocity()
-      print("vel", self.velocity)
       self.position = self.update_position()
-      print("pos", self.position)
       cur_fitness = np.array(list(map(self.function, self.position)))
 
       for i in range(len(cur_fitness)):
@@ -99,6 +104,5 @@ class Swarm:
       if cur_fitness.max() > self.g_fitness:
         self.g_fitness = cur_fitness.max()
 
-      print(self.best_fitness)
 
 
