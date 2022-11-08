@@ -102,17 +102,16 @@ def test_update_velocity():
   return True
 
 def test_update_position():
-  bounds = [[0,1], [-1,1], [-2,2]]
+  bounds = [[0,1], [-1,2], [-2,2]]
   population = 3
   swarm = Swarm(function=simple_fun_list, population=population, bounds=bounds, vmax=1)
-  swarm.position = np.array([[0, 1, 2], [1, 1, 1], [2, 2, 1]])
+  swarm.position = np.array([[0, 1, 1], [1, 1, 1], [2, 2, 1]])
   swarm.velocity = np.array([[0.1, 0.5, 0],[0.1, -0.4, 0.2],[-1, -0.5, 0.1]])
   swarm.position = swarm.update_position()
-  expected = [[0.1, 1.5, 2], [1.1, 0.6, 1.2], [1, 1.5, 1.1]]
+  expected = [[0.1, 1.5, 1], [1., 0.6, 1.2], [1., 1.5, 1.1]]
   
   for i in range(swarm.position.shape[0]):
     for j in range(swarm.position.shape[1]):
-
       if swarm.position[i][j] != expected[i][j]:
         return "Position update incorrect, recieved {} , expected {}".format(swarm.position,expected)
 
@@ -124,7 +123,16 @@ def test_step():
   swarm = Swarm(function=simple_fun_list, population=population, bounds=bounds, vmax = 0.1)
   swarm.initialise_swarm()
   swarm.step(steps = 100, tol = 0.01)
-  return str(swarm.g_best) + str(swarm.g_fitness)
   
+  for pos in swarm.position:
 
+    if pos[0] < bounds[0][0] or pos[0] > bounds[0][1] or pos[1] < bounds[1][0] or pos[1] > bounds[1][1]:
+      return "swarm member(s) out of bounds" + str(swarm.g_best) + str(swarm.g_fitness)
+
+    if swarm.g_fitness == 2:
+      print("Global Optima found!")
+      return True
+
+  return "No explicit error, but search did not find global optima"
+  
 

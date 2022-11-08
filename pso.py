@@ -87,7 +87,16 @@ class Swarm:
     return vel
 
   def update_position(self):
-    return np.add(self.position, self.velocity)
+    position =  np.add(self.position, self.velocity)
+
+    for i,pos in enumerate(position):
+      for j,bound in enumerate(self.bounds):
+        if pos[j] < bound[0]:
+          pos[j] = bound[0]
+        if pos[j] > bound[1]:
+          pos[j] = bound[1]
+
+    return position
 
   def step(self, steps = 1, tol = 0):
 
