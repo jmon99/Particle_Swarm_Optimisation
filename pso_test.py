@@ -17,7 +17,7 @@ def rosenbrock(param):
 
 def test_init():
   swarm = Swarm(function=simple_fun, population = 50, bounds = [[0,1], [1,10]], vmax=1)
-  if (swarm.population==50 and swarm.bounds[1][1] == 10 and swarm.vmax==1 and swarm.c1==2.8 and swarm.c2==1.3 and swarm.beta==1 and swarm.max_iterations==200):
+  if (swarm.population==50 and swarm.bounds[1][1]==10 and swarm.vmax==1 and swarm.c1==2.8 and swarm.c2==1.3 and swarm.beta==1):
 
     return True
 
@@ -95,10 +95,11 @@ def test_update_velocity():
   bounds = [[0,1]]
   population = 3
   swarm = Swarm(function=simple_fun_list, population=population, bounds=bounds, vmax=10)
-  swarm.position = np.array([[0],[0],[0]])
-  swarm.velocity = np.array([[1],[1],[1]])
-  swarm.p_best = np.array([[1],[0],[2]])
+  swarm.position = np.array([[0.],[0.],[0.]])
+  swarm.velocity = np.array([[1.],[1.],[1.]])
+  swarm.p_best = np.array([[1.],[0.],[2.]])
   swarm.g_best = 1
+  np.random.seed(100)
   swarm.velocity = swarm.update_velocity()
   expected_vol = [[3.62],[1.01],[3.54]]
   round_res = np.round_(swarm.velocity, decimals = 2)
@@ -128,28 +129,37 @@ def test_update_position():
 def test_step():
   bounds = [[-1, 1], [-1, 1]]
   population = 10
-  swarm = Swarm(function=simple_fun_list, population=population, bounds=bounds, vmax = 0.1)
+  swarm = Swarm(function=simple_fun_list, population=population, bounds=bounds, vmax = 2)
   swarm.initialise_swarm()
-  swarm.step(steps = 100, tol = 0.01)
+  swarm.step(steps = 10)
   
   for pos in swarm.position:
 
     if pos[0] < bounds[0][0] or pos[0] > bounds[0][1] or pos[1] < bounds[1][0] or pos[1] > bounds[1][1]:
       return "swarm member(s) out of bounds" + str(swarm.g_best) + str(swarm.g_fitness)
 
-    if swarm.g_fitness == 2:
+    if swarm.g_fitness == -2:
       print("Global Optima found!")
       return True
 
-  return "No explicit error, but search did not find global optima"
+  return "No explicit error, but search did not find global optima {}".format(swarm.g_fitness)
   
-def test_rosenbrock():
+def test_rosenbrock_100_steps():
   bounds = [[-5,5],[-5,5],[-5,5]]
-  print(rosenbrock([1,1,1]))
   population = 30
-  swarm = Swarm(function=rosenbrock, population=population, bounds=bounds, vmax = 10, beta = 0.7298)
+  swarm = Swarm(function=rosenbrock, population=population, bounds=bounds, vmax = 7.5, beta = 0.265)
   swarm.initialise_swarm()
   swarm.step(steps = 100)
+  print(swarm.g_best)
+  print(swarm.g_fitness)
+  return True
+
+def test_fit_rosenbrock():
+  bounds = [[-5,5],[-5,5],[-5,5]]
+  population = 100
+  swarm = Swarm(function=rosenbrock, population=population, bounds=bounds, vmax = 7.5, beta = 0.265)
+  swarm.initialise_swarm()
+  swarm.fit()
   print(swarm.g_best)
   print(swarm.g_fitness)
   return True

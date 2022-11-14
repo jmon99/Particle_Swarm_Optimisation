@@ -14,7 +14,6 @@ class Swarm:
     beta=1,
     c1=2.8,
     c2=1.3,
-    max_iterations=200,
     cost_bound=None):
 
     """
@@ -45,7 +44,6 @@ class Swarm:
     self.beta = beta
     self.c1 = c1
     self.c2 = c2
-    self.max_iterations = max_iterations
     self.cost_bound = cost_bound
     self.vmax = vmax
     self.velocity = None
@@ -66,25 +64,29 @@ class Swarm:
     self.p_best = self.position
     self.best_fitness = np.array(list(map(self.function, self.position)))
     g_index = np.argmin(self.best_fitness)
-    self.g_fitness = self.best_fitness[g_index]
+    self.swarm_fitness = self.g_fitness = self.best_fitness[g_index]
     self.g_best = self.position[g_index]
 
 
   def update_velocity(self):
-    np.random.seed(100)
     r1, r2 = np.random.uniform(0,1,[2,self.population])
+    """
     term1 = self.beta * self.velocity
     term2 = self.c1 * np.multiply(r1[:,np.newaxis],(self.p_best - self.position))
     term3 = self.c2 * r2[:,np.newaxis] * (self.g_best - self.position)
     vel = np.add(np.add(term1, term2), term3)
-    norms = np.linalg.norm(vel, axis = 1)
-
+    """
+    self.velocity += self.c1 * r1[:,np.newaxis] * (self.p_best - self.position)
+    self.velocity += self.c2 * r2[:,np.newaxis] * (self.g_best - self.position)
+    self.velocity *= self.beta
+    norms = np.linalg.norm(self.velocity, axis = 1)
+    
     for i, norm in enumerate(norms):
       if norm > self.vmax:
-        vel[i] = vel[i]/norm
-        vel[i] = vel[i] * self.vmax
+        self.velocity[i] = self.velocity[i]/norm
+        self.velocity[i] = self.velocity[i] * self.vmax
      
-    return vel
+    return self.velocity
 
   def update_position(self):
     position =  np.add(self.position, self.velocity)
@@ -101,8 +103,6 @@ class Swarm:
   def step(self, steps = 1, tol = 0):
 
     for i in range(steps):
-      self.velocity = self.update_velocity()
-      self.position = self.update_position()
       cur_fitness = np.array(list(map(self.function, self.position)))
 
       for i in range(len(cur_fitness)):
@@ -111,9 +111,21 @@ class Swarm:
           self.best_fitness[i] = cur_fitness[i]
           self.p_best[i] = self.position[i]
     
-      if cur_fitness.max() < self.g_fitness:
+      self.swarm_fitness = cur_fitness.min()
+
+      if self.g_fitness > self.swarm_fitness:
         self.g_fitness = cur_fitness.min()
 
-  
+      self.velocity = self.update_velocity()
+      self.position = self.update_position()
+      print("Current swarm fitness: {}".format(self.swarm_fitness))
 
+  
+  def fit(self, tol = 0.01):
+    old_fit = self.swarm_fitness
+    self.step(steps=10)
+
+    while np.abs(self.swarm_fitness - old_fit) > tol:
+      old_fit = self.swarm_fitness
+      self.step()
 
