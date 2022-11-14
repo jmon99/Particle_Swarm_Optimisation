@@ -65,7 +65,7 @@ class Swarm:
     self.position = np.random.uniform(lower_bounds, upper_bounds, [self.population, len(lower_bounds)])
     self.p_best = self.position
     self.best_fitness = np.array(list(map(self.function, self.position)))
-    g_index = np.argmax(self.best_fitness)
+    g_index = np.argmin(self.best_fitness)
     self.g_fitness = self.best_fitness[g_index]
     self.g_best = self.position[g_index]
 
@@ -107,12 +107,13 @@ class Swarm:
 
       for i in range(len(cur_fitness)):
 
-        if cur_fitness[i] > self.best_fitness[i]:
+        if cur_fitness[i] < self.best_fitness[i]:
           self.best_fitness[i] = cur_fitness[i]
           self.p_best[i] = self.position[i]
     
-      if cur_fitness.max() > self.g_fitness:
-        self.g_fitness = cur_fitness.max()
+      if cur_fitness.max() < self.g_fitness:
+        self.g_fitness = cur_fitness.min()
 
+  
 
 

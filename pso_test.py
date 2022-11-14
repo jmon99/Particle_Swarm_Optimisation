@@ -11,7 +11,7 @@ def rosenbrock(param):
   f = 0
 
   for i in range(len(param) - 1):
-    f += (100(param[i + 1] - param[i]**2)**2 + (1 - param[i])**2)
+    f += (100 * (param[i + 1] - param[i]**2)**2 + (1 - param[i])**2)
 
   return f
 
@@ -144,13 +144,14 @@ def test_step():
   return "No explicit error, but search did not find global optima"
   
 def test_rosenbrock():
-  bounds = [[-2,2],[-2,2],[-2,2]]
-  population = 50
-  swarm = Swarm(function=rosenbrock, population=population, bounds=bounds, vmax = 0.75)
+  bounds = [[-5,5],[-5,5],[-5,5]]
+  print(rosenbrock([1,1,1]))
+  population = 30
+  swarm = Swarm(function=rosenbrock, population=population, bounds=bounds, vmax = 10, beta = 0.7298)
   swarm.initialise_swarm()
-  swarm.step(steps = 100, tol = 0.01)
-  print(g_best)
-  print(g_fitness)
+  swarm.step(steps = 100)
+  print(swarm.g_best)
+  print(swarm.g_fitness)
   return True
 
 
