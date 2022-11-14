@@ -113,15 +113,17 @@ class Swarm:
     
       self.swarm_fitness = cur_fitness.min()
 
-      if self.g_fitness > self.swarm_fitness:
-        self.g_fitness = cur_fitness.min()
+      if self.swarm_fitness < self.g_fitness:
+        self.g_fitness = self.swarm_fitness
+        g_index = np.argmin(self.best_fitness)
+        self.g_best = self.position[g_index]
 
       self.velocity = self.update_velocity()
       self.position = self.update_position()
       print("Current swarm fitness: {}".format(self.swarm_fitness))
 
   
-  def fit(self, tol = 0.01):
+  def fit(self, tol = 0.0000000001):
     old_fit = self.swarm_fitness
     self.step(steps=10)
 
