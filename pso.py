@@ -74,8 +74,8 @@ class Swarm:
     np.random.seed(100)
     r1, r2 = np.random.uniform(0,1,[2,self.population])
     term1 = self.beta * self.velocity
-    term2 = self.c1 * np.multiply(r1[:,np.newaxis],self.p_best)
-    term3 = self.c2 * r2[:,np.newaxis] * self.g_best
+    term2 = self.c1 * np.multiply(r1[:,np.newaxis],(self.p_best - self.position))
+    term3 = self.c2 * r2[:,np.newaxis] * (self.g_best - self.position)
     vel = np.add(np.add(term1, term2), term3)
     norms = np.linalg.norm(vel, axis = 1)
 

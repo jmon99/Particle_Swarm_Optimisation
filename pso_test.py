@@ -7,6 +7,14 @@ def simple_fun(x, y):
 def simple_fun_list(param):
   return simple_fun(param[0], param[1])
 
+def rosenbrock(param):
+  f = 0
+
+  for i in range(len(param) - 1):
+    f += (100(param[i + 1] - param[i]**2)**2 + (1 - param[i])**2)
+
+  return f
+
 def test_init():
   swarm = Swarm(function=simple_fun, population = 50, bounds = [[0,1], [1,10]], vmax=1)
   if (swarm.population==50 and swarm.bounds[1][1] == 10 and swarm.vmax==1 and swarm.c1==2.8 and swarm.c2==1.3 and swarm.beta==1 and swarm.max_iterations==200):
@@ -87,9 +95,9 @@ def test_update_velocity():
   bounds = [[0,1]]
   population = 3
   swarm = Swarm(function=simple_fun_list, population=population, bounds=bounds, vmax=10)
-  swarm.position = [[0],[0],[0]]
-  swarm.velocity = [[1],[1],[1]]
-  swarm.p_best = [[1],[0],[2]]
+  swarm.position = np.array([[0],[0],[0]])
+  swarm.velocity = np.array([[1],[1],[1]])
+  swarm.p_best = np.array([[1],[0],[2]])
   swarm.g_best = 1
   swarm.velocity = swarm.update_velocity()
   expected_vol = [[3.62],[1.01],[3.54]]
@@ -135,4 +143,14 @@ def test_step():
 
   return "No explicit error, but search did not find global optima"
   
+def test_rosenbrock():
+  bounds = [[-2,2],[-2,2],[-2,2]]
+  population = 50
+  swarm = Swarm(function=rosenbrock, population=population, bounds=bounds, vmax = 0.75)
+  swarm.initialise_swarm()
+  swarm.step(steps = 100, tol = 0.01)
+  print(g_best)
+  print(g_fitness)
+  return True
+
 
