@@ -127,13 +127,13 @@ class Swarm:
       print("Current swarm fitness: {}".format(self.swarm_fitness))
 
   
-  def fit(self, tol = 0.0000000001):
+  def fit(self, tol = 0.00001):
     """
     Performs PSO on the function self.function given as an attribute when __init__ was called.
     PSO continues until the change in best value(current best swarm value, not historuc best) is
     less than the tolerance value.
 
-    tol -> optional parameter to set the tolerance, if not provided the default is 0.0000000001 
+    tol -> optional parameter to set the tolerance, if not provided the default is 0.00001 
     """
     old_fit = self.swarm_fitness
     self.step(steps=10)
@@ -141,4 +141,5 @@ class Swarm:
     while np.abs(self.swarm_fitness - old_fit) > tol:
       old_fit = self.swarm_fitness
       self.step()
+
 
