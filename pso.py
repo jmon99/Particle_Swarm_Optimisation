@@ -69,16 +69,15 @@ class Swarm:
 
 
   def update_velocity(self):
-    r1, r2 = np.random.uniform(0,1,[2,self.population])
     """
+    Updates the array of velocity values self.velocity . Each element represents the velocity of a particle.
+    If any of the new velocity values exceed vmax in magnitude they are reduced to match it. 
+    """
+    r1, r2 = np.random.uniform(0,1,[2,self.population])
     term1 = self.beta * self.velocity
     term2 = self.c1 * np.multiply(r1[:,np.newaxis],(self.p_best - self.position))
     term3 = self.c2 * r2[:,np.newaxis] * (self.g_best - self.position)
-    vel = np.add(np.add(term1, term2), term3)
-    """
-    self.velocity += self.c1 * r1[:,np.newaxis] * (self.p_best - self.position)
-    self.velocity += self.c2 * r2[:,np.newaxis] * (self.g_best - self.position)
-    self.velocity *= self.beta
+    self.velocity = np.add(np.add(term1, term2), term3)
     norms = np.linalg.norm(self.velocity, axis = 1)
     
     for i, norm in enumerate(norms):
@@ -89,6 +88,9 @@ class Swarm:
     return self.velocity
 
   def update_position(self):
+    """
+    Updates the position of each particle, in the array self.position
+    """
     position =  np.add(self.position, self.velocity)
 
     for i,pos in enumerate(position):
@@ -100,8 +102,10 @@ class Swarm:
 
     return position
 
-  def step(self, steps = 1, tol = 0):
-
+  def step(self, steps = 1):
+    """
+    Performs a single step of the PSO algoritm, or the number of steps given in the optional step parameter
+    """
     for i in range(steps):
       cur_fitness = np.array(list(map(self.function, self.position)))
 
@@ -124,6 +128,13 @@ class Swarm:
 
   
   def fit(self, tol = 0.0000000001):
+    """
+    Performs PSO on the function self.function given as an attribute when __init__ was called.
+    PSO continues until the change in best value(current best swarm value, not historuc best) is
+    less than the tolerance value.
+
+    tol -> optional parameter to set the tolerance, if not provided the default is 0.0000000001 
+    """
     old_fit = self.swarm_fitness
     self.step(steps=10)
 
