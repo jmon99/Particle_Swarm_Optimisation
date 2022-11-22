@@ -147,7 +147,7 @@ def test_step():
 def test_rosenbrock_100_steps():
   bounds = [[-5,5],[-5,5],[-5,5]]
   population = 30
-  swarm = Swarm(function=rosenbrock, population=population, bounds=bounds, vmax = 7.5, beta = 0.265)
+  swarm = Swarm(function=rosenbrock, population=population, bounds=bounds, vmax = 7.5, beta = 0.79681)
   swarm.initialise_swarm()
   swarm.step(steps = 100)
   print(swarm.g_best)
@@ -156,10 +156,10 @@ def test_rosenbrock_100_steps():
 
 def test_fit_rosenbrock():
   bounds = [[-5,5],[-5,5],[-5,5]]
-  population = 100
-  swarm = Swarm(function=rosenbrock, population=population, bounds=bounds, vmax = 7.5, beta = 0.265)
+  population = 25
+  swarm = Swarm(function=rosenbrock, population=population, bounds=bounds, vmax = 7.5, beta = 0.79681)
   swarm.initialise_swarm()
-  swarm.fit()
+  swarm.fit(tol=0.0000000001)
   print(swarm.g_best)
   print(swarm.g_fitness)
   return True
