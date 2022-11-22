@@ -106,6 +106,7 @@ class Swarm:
     """
     Performs a single step of the PSO algoritm, or the number of steps given in the optional step parameter
     """
+
     for i in range(steps):
       cur_fitness = np.array(list(map(self.function, self.position)))
 
