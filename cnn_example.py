@@ -125,7 +125,7 @@ def pso_wrapper(params):
   
   return(loss)
 
-swarm = Swarm(pso_wrapper, 5, [[0.00000001,1], [0, 1]], 0.75, beta=0.8)
+swarm = Swarm(pso_wrapper, 5, [[0.00000001,0.1], [0, 1]], 0.75, beta=0.8)
 swarm.initialise_swarm()
 swarm.fit(tol=0.001)
 print(swarm.g_best)
