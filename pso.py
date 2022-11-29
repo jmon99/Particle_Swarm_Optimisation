@@ -41,7 +41,8 @@ class Swarm:
 
     self.function = function
     self.population = population
-    self.bounds = bounds
+    self.bounds = np.array([[0,1]] * len(bounds))#bounds used during search
+    self.limits = bounds #value bounds used for parameter assignment of fitness function
     self.beta = beta
     self.c1 = c1
     self.c2 = c2
@@ -129,7 +130,7 @@ class Swarm:
       print("Current swarm fitness: {}".format(self.swarm_fitness))
 
   
-  def fit(self, tol = 0.00001):
+  def fit(self, tol = 0.00001, max_iter = None):
     """
     Performs PSO on the function self.function given as an attribute when __init__ was called.
     PSO continues until the change in best value(current best swarm value, not historuc best) is
@@ -138,10 +139,22 @@ class Swarm:
     tol -> optional parameter to set the tolerance, if not provided the default is 0.00001 
     """
     old_fit = self.swarm_fitness
-    self.step(steps=10)
+    self.step()
 
     while np.abs(self.swarm_fitness - old_fit) > tol:
       old_fit = self.swarm_fitness
       self.step()
 
+      if (step_num == max_iter):
+        break
+
+  def convert_to_bounds(bounds, positions):
+    values = np.zeros_like(positions)
+
+    for i, pos in enumerate(positions):
+      for j in range(len(bounds)):
+        values[i][j] = bounds[j][0] + ((bounds[j][1] - bounds[j][0]) * pos[j])
+
+    return values
+        
 

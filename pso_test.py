@@ -164,4 +164,9 @@ def test_fit_rosenbrock():
   print(swarm.g_fitness)
   return True
 
-
+def test_convert_to_bounds():
+  limits = np.array([[0.0001, 0.0009], [0.1, 0.9], [1, 5]])
+  positions = np.array([[0.23, 0.12, 0.812], [0.46, 0.06, 0.406]])
+  parameters = Swarm.convert_to_bounds(limits, positions)
+  print(parameters)
+  return "testing test"
