@@ -5,6 +5,15 @@ import numpy as np
 PSO class.
 """
 
+def convert_to_bounds(bounds, positions):
+  values = np.zeros_like(positions)
+
+  for i, pos in enumerate(positions):
+    for j in range(len(bounds)):
+      values[i][j] = bounds[j][0] + ((bounds[j][1] - bounds[j][0]) * pos[j])
+
+  return values
+
 class Swarm:
 
   def __init__(self,
@@ -64,7 +73,8 @@ class Swarm:
     self.velocity = np.random.uniform(0 - self.vmax, self.vmax, [self.population, len(lower_bounds)])
     self.position = np.random.uniform(lower_bounds, upper_bounds, [self.population, len(lower_bounds)])
     self.p_best = self.position
-    self.best_fitness = np.array(list(map(self.function, self.position)))
+    params = convert_to_bounds(self.limits, self.position)
+    self.best_fitness = np.array(list(map(self.function, params)))
     g_index = np.argmin(self.best_fitness)
     self.swarm_fitness = self.g_fitness = self.best_fitness[g_index]
     self.g_best = self.position[g_index]
@@ -110,7 +120,8 @@ class Swarm:
     """
 
     for i in range(steps):
-      cur_fitness = np.array(list(map(self.function, self.position)))
+      params = convert_to_bounds(self.limits, self.position)
+      cur_fitness = np.array(list(map(self.function, params)))
 
       for i in range(len(cur_fitness)):
 
@@ -148,13 +159,5 @@ class Swarm:
       if (step_num == max_iter):
         break
 
-  def convert_to_bounds(bounds, positions):
-    values = np.zeros_like(positions)
-
-    for i, pos in enumerate(positions):
-      for j in range(len(bounds)):
-        values[i][j] = bounds[j][0] + ((bounds[j][1] - bounds[j][0]) * pos[j])
-
-    return values
         
 

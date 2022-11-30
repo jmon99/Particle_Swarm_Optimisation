@@ -1,4 +1,4 @@
-from pso import Swarm
+from pso import Swarm, convert_to_bounds
 import numpy as np
 
 def simple_fun(x, y):
@@ -17,7 +17,7 @@ def rosenbrock(param):
 
 def test_init():
   swarm = Swarm(function=simple_fun, population = 50, bounds = [[0,1], [1,10]], vmax=1)
-  if (swarm.population==50 and swarm.bounds[1][1]==10 and swarm.vmax==1 and swarm.c1==2.8 and swarm.c2==1.3 and swarm.beta==1):
+  if (swarm.population==50 and swarm.limits[1][1]==10 and swarm.vmax==1 and swarm.c1==2.8 and swarm.c2==1.3 and swarm.beta==1):
 
     return True
 
@@ -52,7 +52,7 @@ def test_initial_position():
   if(swarm.position.shape != swarm.velocity.shape):
     return "swarm.postion initialised with wrong shape"
   
-  if(swarm.position[0][0] < 0 or swarm.position[1][1] < 1 or swarm.position[1][0] > 1 or swarm.position[0][1] > 10):
+  if(swarm.position[0][0] < 0 or swarm.position[1][1] < 0 or swarm.position[1][0] > 1 or swarm.position[0][1] > 1):
     return "Inital Position Test Failed, postion {} is outside of given bounds".format(swarm.position)
 
   return True
@@ -114,10 +114,10 @@ def test_update_position():
   bounds = [[0,1], [-1,2], [-2,2]]
   population = 3
   swarm = Swarm(function=simple_fun_list, population=population, bounds=bounds, vmax=1)
-  swarm.position = np.array([[0, 1, 1], [1, 1, 1], [2, 2, 1]])
-  swarm.velocity = np.array([[0.1, 0.5, 0],[0.1, -0.4, 0.2],[-1, -0.5, 0.1]])
+  swarm.position = np.array([[0, .1, .1], [.1, .1, .1], [.2, .2, .1]])
+  swarm.velocity = np.array([[0.1, 0.5, 0],[0.1, -0.4, 0.1],[-.1, -0.5, 0.1]])
   swarm.position = swarm.update_position()
-  expected = [[0.1, 1.5, 1], [1., 0.6, 1.2], [1., 1.5, 1.1]]
+  expected = [[0.1, .6, .1], [.2, 0, .2], [.1, 0, .2]]
   
   for i in range(swarm.position.shape[0]):
     for j in range(swarm.position.shape[1]):
@@ -144,12 +144,12 @@ def test_step():
 
   return "No explicit error, but search did not find global optima {}".format(swarm.g_fitness)
   
-def test_rosenbrock_100_steps():
+def test_rosenbrock_10_steps():
   bounds = [[-5,5],[-5,5],[-5,5]]
-  population = 30
+  population = 5
   swarm = Swarm(function=rosenbrock, population=population, bounds=bounds, vmax = 7.5, beta = 0.79681)
   swarm.initialise_swarm()
-  swarm.step(steps = 100)
+  swarm.step(steps = 10)
   print(swarm.g_best)
   print(swarm.g_fitness)
   return True
@@ -159,7 +159,7 @@ def test_fit_rosenbrock():
   population = 25
   swarm = Swarm(function=rosenbrock, population=population, bounds=bounds, vmax = 7.5, beta = 0.79681)
   swarm.initialise_swarm()
-  swarm.fit(tol=0.0000000001)
+  swarm.fit(tol=0.000000000000001)
   print(swarm.g_best)
   print(swarm.g_fitness)
   return True
@@ -167,6 +167,14 @@ def test_fit_rosenbrock():
 def test_convert_to_bounds():
   limits = np.array([[0.0001, 0.0009], [0.1, 0.9], [1, 5]])
   positions = np.array([[0.23, 0.12, 0.812], [0.46, 0.06, 0.406]])
-  parameters = Swarm.convert_to_bounds(limits, positions)
-  print(parameters)
-  return "testing test"
+  parameters = convert_to_bounds(limits, positions)
+  expected = [[2.84e-4, 0.196, 4.248]]
+  
+  for i in range(len(expected)):
+    if parameters[0][i] != expected[0][i]:
+      return "Incorrect conversion, expected {}, but received {}".format(expected, parameters)
+
+  return True 
+
+
+
