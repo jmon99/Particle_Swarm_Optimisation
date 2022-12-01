@@ -114,12 +114,15 @@ class Swarm:
 
     return position
 
-  def step(self, steps = 1):
+  def step(self, steps = 1, dynamic_acc = False):
     """
     Performs a single step of the PSO algoritm, or the number of steps given in the optional step parameter
     """
+    delta = 2
 
     for i in range(steps):
+      self.c1 = self.c1 / (1  + ((i)/steps))
+      self.c2 = self.c2 * (((delta * i) + steps)/((delta * steps) + i))
       params = convert_to_bounds(self.limits, self.position)
       cur_fitness = np.array(list(map(self.function, params)))
 
@@ -138,9 +141,9 @@ class Swarm:
 
       self.velocity = self.update_velocity()
       self.position = self.update_position()
+      print("current best parameters: {}".format(convert_to_bounds(self.limits, [self.g_best])))
       print("Current swarm fitness: {}".format(self.swarm_fitness))
 
-  
   def fit(self, tol = 0.00001, max_iter = None):
     """
     Performs PSO on the function self.function given as an attribute when __init__ was called.
@@ -150,14 +153,12 @@ class Swarm:
     tol -> optional parameter to set the tolerance, if not provided the default is 0.00001 
     """
     old_fit = self.swarm_fitness
-    self.step()
+    self.step(steps = 2)
 
     while np.abs(self.swarm_fitness - old_fit) > tol:
       old_fit = self.swarm_fitness
       self.step()
 
-      if (step_num == max_iter):
-        break
 
         
 

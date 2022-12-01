@@ -144,20 +144,21 @@ def test_step():
 
   return "No explicit error, but search did not find global optima {}".format(swarm.g_fitness)
   
-def test_rosenbrock_10_steps():
+def test_rosenbrock_50_steps():
   bounds = [[-5,5],[-5,5],[-5,5]]
-  population = 5
-  swarm = Swarm(function=rosenbrock, population=population, bounds=bounds, vmax = 7.5, beta = 0.79681)
+  population = 20
+  swarm = Swarm(function=rosenbrock, population=population, bounds=bounds, vmax = 0.75, beta = 0.79681, c1=2.8, c2=1.3)
   swarm.initialise_swarm()
-  swarm.step(steps = 10)
+  swarm.step(steps = 150)
   print(swarm.g_best)
+  print("params: {}".format(convert_to_bounds(bounds, [swarm.g_best])))
   print(swarm.g_fitness)
   return True
 
-def test_fit_rosenbrock():
+def opt_test_fit_rosenbrock():
   bounds = [[-5,5],[-5,5],[-5,5]]
-  population = 25
-  swarm = Swarm(function=rosenbrock, population=population, bounds=bounds, vmax = 7.5, beta = 0.79681)
+  population = 10
+  swarm = Swarm(function=rosenbrock, population=population, bounds=bounds, vmax = 0.5, beta = 0.41681, c1 = 3)
   swarm.initialise_swarm()
   swarm.fit(tol=0.000000000000001)
   print(swarm.g_best)
@@ -176,5 +177,15 @@ def test_convert_to_bounds():
 
   return True 
 
+def test_rosenbrock_50_dynamic_steps():
+  bounds = [[-5,5],[-5,5],[-5,5]]
+  population = 20
+  swarm = Swarm(function=rosenbrock, population=population, bounds=bounds, vmax = 0.5, beta = 0.6, c1=5.6, c2=2.6)
+  swarm.initialise_swarm()
+  swarm.step(steps = 150, dynamic_acc=True)
+  print(swarm.g_best)
+  print("params: {}".format(convert_to_bounds(bounds, [swarm.g_best])))
+  print(swarm.g_fitness)
+  return True
 
 
