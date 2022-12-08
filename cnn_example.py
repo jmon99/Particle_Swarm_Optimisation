@@ -12,7 +12,9 @@ from pso import Swarm
 for i in range(torch.cuda.device_count()):
   print("device: {}".format(torch.cuda.get_device_name(i)))
 
+dtype = torch.float
 device = "cuda:3" if torch.cuda.is_available() else "cpu"
+device = torch.device("mps")
 print(f"Using {device} device")
 print(device)
 

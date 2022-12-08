@@ -74,7 +74,7 @@ class Swarm:
     self.position = np.random.uniform(lower_bounds, upper_bounds, [self.population, len(lower_bounds)])
     self.p_best = self.position
     params = convert_to_bounds(self.limits, self.position)
-    self.best_fitness = np.array(list(map(self.function, params)))
+    self.best_fitness = np.fromiter(map(self.function, params), dtype=np.float32)
     g_index = np.argmin(self.best_fitness)
     self.swarm_fitness = self.g_fitness = self.best_fitness[g_index]
     self.g_best = self.position[g_index]
@@ -124,7 +124,7 @@ class Swarm:
       self.c1 = self.c1 / (1  + ((i)/steps))
       self.c2 = self.c2 * (((delta * i) + steps)/((delta * steps) + i))
       params = convert_to_bounds(self.limits, self.position)
-      cur_fitness = np.array(list(map(self.function, params)))
+      cur_fitness = np.fromiter(map(self.function, params), dtype=np.float32)
 
       for i in range(len(cur_fitness)):
 
