@@ -141,7 +141,6 @@ class Swarm:
 
       self.velocity = self.update_velocity()
       self.position = self.update_position()
-      print("current best parameters: {}".format(convert_to_bounds(self.limits, [self.g_best])))
       print("Current swarm fitness: {}".format(self.swarm_fitness))
 
   def fit(self, tol = 0.00001, max_iter = None):
