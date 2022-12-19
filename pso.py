@@ -126,11 +126,11 @@ class Swarm:
       params = convert_to_bounds(self.limits, self.position)
       cur_fitness = np.fromiter(map(self.function, params), dtype=np.float32)
 
-      for i in range(len(cur_fitness)):
+      for j in range(len(cur_fitness)):
 
-        if cur_fitness[i] < self.best_fitness[i]:
-          self.best_fitness[i] = cur_fitness[i]
-          self.p_best[i] = self.position[i]
+        if cur_fitness[j] < self.best_fitness[j]:
+          self.best_fitness[j] = cur_fitness[j]
+          self.p_best[j] = self.position[j]
     
       self.swarm_fitness = cur_fitness.min()
 
@@ -141,7 +141,7 @@ class Swarm:
 
       self.velocity = self.update_velocity()
       self.position = self.update_position()
-      print("Current swarm fitness: {}".format(self.swarm_fitness))
+      print("step{} Current swarm fitness: {}".format(i, self.swarm_fitness))
 
   def fit(self, tol = 0.00001, max_iter = None):
     """
