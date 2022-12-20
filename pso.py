@@ -16,16 +16,23 @@ def convert_to_bounds(bounds, positions):
 
 
 def find_neighbours(position, k):
-  #find k nearest neighbours
+  """
+  Returns neighbourhoood of size k for each particle in an array of positions. Each neighbourhood consisting of the particle
+  and its k-1 nearest neighbours in the search space
+
+  param position -> numpy array containing positions of swarm particles.
+  param k -> size of the neighbourhood to be returned
+  returns numpy array of neighbourhoods index positions in given position array
+  """
+
   population = len(position)
   distance_matrix =  np.empty([population, population])
   neighbourhoods = np.empty([population, population])
   distance_matrix = np.sqrt((position**2).sum(axis=1)[:, np.newaxis] + (position**2).sum(axis=1) - 2 * position.dot(position.T))
   indicies = np.argpartition(distance_matrix, k, axis=1)
-  neighbourhoods = np.take(position, indicies, axis=0) 
-  neighbourhoods = neighbourhoods[:,:k]
+  indicies = indicies[:,:k]
 
-  return neighbourhoods
+  return indicies
 
 class Swarm:
 
@@ -91,7 +98,14 @@ class Swarm:
     g_index = np.argmin(self.best_fitness)
     self.swarm_fitness = self.g_fitness = self.best_fitness[g_index]
     self.g_best = self.position[g_index]
+    
+    if k != None:
+      neighbourhoods = find_neighbours(self.position, k)
+      self.n_best = np.empty_like(self.positions)
 
+      for i, neighbourhood in neighbourhoods:
+        n_fitness = np.take(self.best_fitness, neighbourhoods)
+        self.n_best[i] = n_fitness.max()
 
   def update_velocity(self):
     """

@@ -189,8 +189,11 @@ def test_rosenbrock_50_dynamic_steps():
   return True
 
 def test_find_neighbours():
-    positions = np.array([[0,0],[0,1],[1,0],[1,1]])
-    neighbourhoods = find_neighbours(positions, 3)
-    print(neighbourhoods)
-    return True
+  positions = np.array([[0,0],[0,1],[1,0],[1,1]])
+  neighbourhoods = find_neighbours(positions, 3)
+
+  if np.isin(3, neighbourhoods[0]) or np.isin(0, neighbourhoods[3]):
+    return "neighbourhood calculated incorrectly, should return indicies of neighbourhood"
+
+  return True
 
