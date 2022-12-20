@@ -14,6 +14,19 @@ def convert_to_bounds(bounds, positions):
 
   return values
 
+
+def find_neighbours(position, k):
+  #find k nearest neighbours
+  population = len(position)
+  distance_matrix =  np.empty([population, population])
+  neighbourhoods = np.empty([population, population])
+  distance_matrix = np.sqrt((position**2).sum(axis=1)[:, np.newaxis] + (position**2).sum(axis=1) - 2 * position.dot(position.T))
+  indicies = np.argpartition(distance_matrix, k, axis=1)
+  neighbourhoods = np.take(position, indicies, axis=0) 
+  neighbourhoods = neighbourhoods[:,:k]
+
+  return neighbourhoods
+
 class Swarm:
 
   def __init__(self,
@@ -64,7 +77,7 @@ class Swarm:
     self.best_fitness = None
     self.g_fitness = None
 
-  def initialise_swarm(self):
+  def initialise_swarm(self, k=None):
     """
     Initialises particles with random velocities and positions
     """
@@ -103,8 +116,8 @@ class Swarm:
     """
     Updates the position of each particle, in the array self.position
     """
-    position =  np.add(self.position, self.velocity)
-
+    position = np.add(self.position, self.velocity)
+    
     for i,pos in enumerate(position):
       for j,bound in enumerate(self.bounds):
         if pos[j] < bound[0]:
@@ -158,6 +171,4 @@ class Swarm:
       old_fit = self.swarm_fitness
       self.step()
 
-
-        
 
