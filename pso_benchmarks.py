@@ -38,4 +38,10 @@ for index, func in enumerate(bf.BenchmarkFunction.__subclasses__()):
 
 print(results)
 average = np.mean(results, axis=1)
-print(average)
+minimum = results.min(axis=1)
+maximum = results.max(axis=1)
+std = np.std(results, axis=1)
+print("average: ", average)
+print("min: ", minimum)
+print("max: ", maximum)
+print("std: ", std)
