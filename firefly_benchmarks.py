@@ -28,7 +28,7 @@ for index, func in enumerate(bf.BenchmarkFunction.__subclasses__()):
     bounds = bounds.T
     print(bounds)
 
-    swarm = Firefly(function=instance, population=30, bounds=bounds, beta_0=1, light_absorption=0.8, randomisation_param = 1)
+    swarm = Firefly(function=instance, population=30, bounds=bounds, beta_0=1, light_absorption=0.4, randomisation_param = 1)
     
     for i in range(100):
       swarm.initialise_swarm()

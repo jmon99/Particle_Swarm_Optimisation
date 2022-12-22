@@ -1,5 +1,6 @@
 import numpy as np
 
+from scipy.spatial.distance import cdist
 
 """
 PSO class.
@@ -27,8 +28,7 @@ def find_neighbours(position, k):
 
   population = len(position)
   distance_matrix =  np.empty([population, population])
-  neighbourhoods = np.empty([population, population])
-  distance_matrix = np.sqrt((position**2).sum(axis=1)[:, np.newaxis] + (position**2).sum(axis=1) - 2 * position.dot(position.T))
+  distance_matrix = cdist(position, position)
   indicies = np.argpartition(distance_matrix, k, axis=1)
   indicies = indicies[:,:k]
 
@@ -101,21 +101,29 @@ class Swarm:
     
     if k != None:
       neighbourhoods = find_neighbours(self.position, k)
-      self.n_best = np.empty_like(self.positions)
+      self.n_best = np.empty_like(self.position)
 
-      for i, neighbourhood in neighbourhoods:
-        n_fitness = np.take(self.best_fitness, neighbourhoods)
+      for i, neighbourhood in enumerate(neighbourhoods):
+        n_fitness = np.take(self.best_fitness, neighbourhood)
         self.n_best[i] = n_fitness.max()
 
-  def update_velocity(self):
+  def update_velocity(self, k=None):
     """
     Updates the array of velocity values self.velocity . Each element represents the velocity of a particle.
     If any of the new velocity values exceed vmax in magnitude they are reduced to match it. 
+    
+    If a value of k is given then neighbourhood best of size k is used in place of glabel best, replacing the third term.
     """
+
     r1, r2 = np.random.uniform(0,1,[2,self.population])
     term1 = self.beta * self.velocity
     term2 = self.c1 * np.multiply(r1[:,np.newaxis],(self.p_best - self.position))
-    term3 = self.c2 * r2[:,np.newaxis] * (self.g_best - self.position)
+
+    if k != None:
+      term3 = self.c2 * r2[:,np.newaxis] * (self.n_best - self.position)
+    else:
+      term3 = self.c2 * r2[:,np.newaxis] * (self.g_best - self.position)
+      
     self.velocity = np.add(np.add(term1, term2), term3)
     norms = np.linalg.norm(self.velocity, axis = 1)
     
@@ -141,15 +149,18 @@ class Swarm:
 
     return position
 
-  def step(self, steps = 1, dynamic_acc = False):
+  def step(self, steps = 1, dynamic_acc = False, k = None):
     """
     Performs a single step of the PSO algoritm, or the number of steps given in the optional step parameter
     """
-    delta = 2
+    delta = 5
 
     for i in range(steps):
-      self.c1 = self.c1 / (1  + ((i)/steps))
-      self.c2 = self.c2 * (((delta * i) + steps)/((delta * steps) + i))
+
+      if dynamic_acc:
+        self.c1 = self.c1 / ((1  + ((delta-1) * i)/steps))
+        self.c2 = self.c2 * (((delta * i) + steps)/((delta * steps) + i))
+
       params = convert_to_bounds(self.limits, self.position)
       cur_fitness = np.fromiter(map(self.function, params), dtype=np.float32)
 
@@ -166,7 +177,15 @@ class Swarm:
         g_index = np.argmin(self.best_fitness)
         self.g_best = self.position[g_index]
 
-      self.velocity = self.update_velocity()
+      if k != None:
+        neighbourhoods = find_neighbours(self.position, k)
+
+        for n, neighbourhood in enumerate(neighbourhoods):
+          n_fitness = np.take(self.best_fitness, neighbourhood)
+          n_best_index = np.argmin(n_fitness)
+          self.n_best[n] = neighbourhood[n_best_index]
+
+      self.velocity = self.update_velocity(k=k)
       self.position = self.update_position()
       print("step{} Current swarm fitness: {}".format(i, self.swarm_fitness))
 

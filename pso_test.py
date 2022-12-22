@@ -1,5 +1,6 @@
-from pso import Swarm, convert_to_bounds, find_neighbours
 import numpy as np
+
+from pso import Swarm, convert_to_bounds, find_neighbours
 
 def simple_fun(x, y):
   return(x - (x * y))
@@ -196,4 +197,12 @@ def test_find_neighbours():
     return "neighbourhood calculated incorrectly, should return indicies of neighbourhood"
 
   return True
+
+def test_n_best():
+    bounds = [[-5,5]] * 30
+    population = 30
+    swarm = Swarm(function=rosenbrock, population=population, bounds = bounds, vmax=0.6, beta=0.78, c1=2.8, c2=1.3)
+    swarm.initialise_swarm(k=3)
+    swarm.step(steps=10, k=3)
+    return(True)
 

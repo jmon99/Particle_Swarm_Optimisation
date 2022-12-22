@@ -60,6 +60,17 @@ class Firefly:
             exponent = -self.gamma * distance(i,j)**2
             add = np.array(self.beta_0 * np.exp(exponent) * (firefly - pos) + self.alpha*np.random.uniform(-0.5,0.5,len(self.bounds)))
             self.position[i] = self.position[i] + add 
+
+      for i,pos in enumerate(self.position):
+
+       for j,bound in enumerate(self.bounds):
+
+         if pos[j] < bound[0]:
+           pos[j] = bound[0]
+
+         if pos[j] > bound[1]:
+           pos[j] = bound[1]
+
       params = convert_to_bounds(self.limits, self.position)
       self.attractiveness = np.fromiter(map(self.function, params), dtype=np.float32)
       g_fitness = self.attractiveness.min()
