@@ -153,13 +153,15 @@ class Swarm:
     """
     Performs a single step of the PSO algoritm, or the number of steps given in the optional step parameter
     """
-    delta = 5
+    delta = 2.5
+    c1 = self.c1
+    c2 = self.c2
 
     for i in range(steps):
 
       if dynamic_acc:
-        self.c1 = self.c1 / ((1  + ((delta-1) * i)/steps))
-        self.c2 = self.c2 * (((delta * i) + steps)/((delta * steps) + i))
+        self.c1 = c1 / ((1  + ((delta-1) * i)/steps))
+        self.c2 = c2 * (((delta * i) + steps)/((delta * steps) + i))
 
       params = convert_to_bounds(self.limits, self.position)
       cur_fitness = np.fromiter(map(self.function, params), dtype=np.float32)

@@ -5,6 +5,10 @@ from inspect import signature
 from pso import Swarm
 
 TEST_NUM = 100
+vmax=0.75
+beta=0.8
+c1=2.5
+c2=2.5
 
 def line():
   print(u'\u2500' * 50)
@@ -28,7 +32,7 @@ for index, func in enumerate(bf.BenchmarkFunction.__subclasses__()):
     bounds = bounds.T
     print(bounds)
 
-    swarm = Swarm(function=instance, population=30, bounds=bounds, vmax=0.6, beta=0.6, c1=4.2, c2=1.95)
+    swarm = Swarm(function=instance, population=30, bounds=bounds, vmax=vmax, beta=beta, c1=c1, c2=c2)
     
     for i in range(100):
       swarm.initialise_swarm()
@@ -41,6 +45,7 @@ average = np.mean(results, axis=1)
 minimum = results.min(axis=1)
 maximum = results.max(axis=1)
 std = np.std(results, axis=1)
+print("vmax={}, beta={}, c1={}, c2={}".format(vmax,beta,c1,c2))
 print("average: ", average)
 print("min: ", minimum)
 print("max: ", maximum)
