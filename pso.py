@@ -120,7 +120,7 @@ class Swarm:
     term2 = self.c1 * np.multiply(r1[:,np.newaxis],(self.p_best - self.position))
 
     if k != None:
-      term3 = self.c2 * r2[:,np.newaxis] * (self.n_best - self.position)
+      term3 = self.c2 * r2[:,np.newaxis] * (self.n_best - self.position) 
     else:
       term3 = self.c2 * r2[:,np.newaxis] * (self.g_best - self.position)
       
