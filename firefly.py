@@ -35,16 +35,27 @@ class Firefly:
     self.attractiveness = None
     self.g_fitness = None
     self.g_best = None
-    self.cur_fitness = None
+    self.swarm_fitness = None
    
+  def update_attractiveness(self):
+    params = convert_to_bounds(self.limits, self.position)
+    self.attractiveness = np.fromiter(map(self.function, params), dtype=np.float32)
+    swarm_fitness = self.attractiveness.min()
+
+    if self.g_fitness == None:
+      self.g_fitness = swarm_fitness
+      self.g_best = self.position
+    elif swarm_fitness < self.g_fitness:
+      self.g_fitness = swarm_fitness
+      self.g_best = self.position[np.argmin(self.attractiveness)]
+
+    return swarm_fitness
+
   def initialise_swarm(self):
     lower_bounds = self.bounds[:,0]
     upper_bounds = self.bounds[:,1]
     self.position = np.random.uniform(lower_bounds, upper_bounds, [self.population, len(lower_bounds)])
-    params = convert_to_bounds(self.limits, self.position)
-    self.attractiveness = np.fromiter(map(self.function, params), dtype=np.float32)
-    self.g_fitness = self.attractiveness.min()
-    self.g_best = self.position[np.argmin(self.attractiveness)]
+    self.swarm_fitness = self.update_attractiveness()
 
   def step(self, steps=1):
 
@@ -71,12 +82,8 @@ class Firefly:
          if pos[j] > bound[1]:
            pos[j] = bound[1]
 
-      params = convert_to_bounds(self.limits, self.position)
-      self.attractiveness = np.fromiter(map(self.function, params), dtype=np.float32)
-      g_fitness = self.attractiveness.min()
-      if g_fitness < self.g_fitness:
-        self.g_fitness = g_fitness
+      self.swarm_fitness = self.update_attractiveness()
 
-      print("step{}: swarm fitness = {}".format(step, g_fitness))
+      print("step{}: swarm fitness = {}".format(step, self.swarm_fitness))
 
 
