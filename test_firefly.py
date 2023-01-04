@@ -40,6 +40,7 @@ def test_initialise_swarm():
 
   for i, pos in enumerate(swarm.position):
 
+    print(swarm.attractiveness)
     if (swarm.attractiveness[i], 2) != ((pos[0] + pos[1]) * 10, 2):
       return "Attractiveness calculated incorectly, should use fitness function. recieved {}, expected {}".format((pos[0] + pos[1])*10, swarm.attractiveness[i])
 

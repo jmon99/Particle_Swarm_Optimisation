@@ -47,10 +47,10 @@ for index, func in enumerate(bf.BenchmarkFunction.__subclasses__()):
 
     for i in range(100):
       swarm.initialise_swarm()
-      swarm.step(steps=70)
+      swarm.step(steps=30)
       firefly.position = swarm.position
       firefly.update_attractiveness()
-      firefly.step(steps=30)
+      firefly.step(steps=70)
 
       results[index, i] = firefly.g_fitness
 
@@ -69,10 +69,14 @@ print("std: ", std)
 print("swarm size={}".format(pop))
 print("pso: vmax={}, beta={}, c1={}, c2={}".format(vmax, beta, c1, c2))
 print("firefly: beta_0={}, gamma={}, alpha={}".format(beta_0, gamma, alpha))
-
 print(" Func | avrg | min  | max  | std  |")
+
 for index, func in enumerate(bf.BenchmarkFunction.__subclasses__()):
-    instance=func()
-    print("{} & {} & {} & {} & {} ".format(instance.name(), average[index], minimum[index], maximum[index], std[index]))
+  instance=func()
+  iavg = np.format_float_scientific(average[index], precision=4)
+  imin = np.format_float_scientific(minimum[index], precision=4)
+  imax = np.format_float_scientific(maximum[index], precision=4)
+  istd = np.format_float_scientific(std[index], precision=4)
+  print("{} & {} & {} & {} & {} ".format(instance.name(), iavg, imin, imax, istd))
 
 
