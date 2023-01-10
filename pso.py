@@ -153,7 +153,7 @@ class Swarm:
     """
     Performs a single step of the PSO algoritm, or the number of steps given in the optional step parameter
     """
-    delta = 2.5
+    delta = 2
     c1 = self.c1
     c2 = self.c2
 

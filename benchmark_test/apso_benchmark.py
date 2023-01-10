@@ -5,10 +5,12 @@ from inspect import signature
 from pso import Swarm
 
 TEST_NUM = 100
+pop = 30
 vmax=0.75
 beta=0.8
-c1=2.5
-c2=2.5
+c1=2
+c2=2
+delta=2
 
 def line():
   print(u'\u2500' * 50)
@@ -32,7 +34,7 @@ for index, func in enumerate(bf.BenchmarkFunction.__subclasses__()):
     bounds = bounds.T
     print(bounds)
 
-    swarm = Swarm(function=instance, population=30, bounds=bounds, vmax=vmax, beta=beta, c1=c1, c2=c2)
+    swarm = Swarm(function=instance, population=pop, bounds=bounds, vmax=vmax, beta=beta, c1=c1, c2=c2)
     
     for i in range(100):
       swarm.initialise_swarm()
@@ -50,3 +52,15 @@ print("average: ", average)
 print("min: ", minimum)
 print("max: ", maximum)
 print("std: ", std)
+print("swarm size={}".format(pop))
+print("pso: vmax={}, beta={}, c1={}, c2={}, delta={}".format(vmax, beta, c1, c2, delta))
+
+for index, func in enumerate(bf.BenchmarkFunction.__subclasses__()):
+  instance=func()
+  iavg = np.format_float_scientific(average[index], precision=4)
+  imin = np.format_float_scientific(minimum[index], precision=4)
+  imax = np.format_float_scientific(maximum[index], precision=4)
+  istd = np.format_float_scientific(std[index], precision=4)
+  print("{} & {} & {} & {} & {} ".format(instance.name(), iavg, imin, imax, istd))
+
+
